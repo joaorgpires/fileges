@@ -70,6 +70,7 @@ void init_fat(void);
 void init_dir_block(int, int);
 void init_dir_entry(dir_entry*, char, char*, int, int);
 void exec_com(COMMAND);
+char * getMonth(int m);
 
 // funções de manipulação de directórios
 void vfs_ls(void);
@@ -273,6 +274,32 @@ void init_dir_entry(dir_entry *dir, char type, char *name, int size, int first_b
   return;
 }
 
+char * getMonth(int m) {
+  if(m == 1)
+    return "Jan";
+  if(m == 2)
+    return "Fev";
+  if(m == 3)
+    return "Mar";
+  if(m == 4)
+    return "Abr";
+  if(m == 5)
+    return "Mai";
+  if(m == 6)
+    return "Jun";
+  if(m == 7)
+    return "Jul";
+  if(m == 8)
+    return "Ago";
+  if(m == 9)
+    return "Set";
+  if(m == 10)
+    return "Out";
+  if(m == 11)
+    return "Nov";
+  else
+    return "Dez";
+}
 
 void exec_com(COMMAND com) {
   // para cada comando invocar a função que o implementa
@@ -319,12 +346,31 @@ void exec_com(COMMAND com) {
 
 // ls - lista o conteúdo do directório actual
 void vfs_ls(void) {
+  dir_entry * dir;
+  int n_entradas, i;
+  dir = (dir_entry *) BLOCK(current_dir);
+  n_entradas = dir[0].size;
+  for(i = 0; i < n_entradas; i++) {
+    printf("%s %d-%s-%d ", dir[i].name, dir[i].day, getMonth(dir[i].month), dir[i].year + 1900);
+    if(dir[i].type == TYPE_DIR)
+      printf("DIR\n");
+    else
+      printf("%d\n", dir[i].size);
+  }
   return;
 }
 
 
 // mkdir dir - cria um subdirectório com nome dir no directório actual
 void vfs_mkdir(char *nome_dir) {
+  //VERIFICACOES: -----------
+  //Ha vlocos livres?
+  //Tamanho do nome ok?
+  //Verificar se existe entrada com esse nome?
+  //IMPLEMENTACAO: -----------
+  //Alocar bloco
+  //Inicializar novo bloco com entradas para . e ..
+  //Adicionar DIR_ENTRY do novo directorio ao directorio corrente
   return;
 }
 
@@ -337,6 +383,9 @@ void vfs_cd(char *nome_dir) {
 
 // pwd - escreve o caminho absoluto do directório actual
 void vfs_pwd(void) {
+  dir_entry * dir;
+  dir = (dir_entry *) BLOCK(current_dir);
+  printf("%s\n", dir[0].name);
   return;
 }
 
